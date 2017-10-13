@@ -29,7 +29,7 @@ router.post('/post',function(req,res){
 
 })
 
-app.get('/logout',function(req,res){
+router.get('/logout',function(req,res){
     
 })
 
