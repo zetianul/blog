@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+var crypto = require('crypto'),
+    User = require('../models/user.js');
+
 router.get('/',function(req,res){
     res.render('index',{title:'Express'});
 })
