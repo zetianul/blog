@@ -2,14 +2,21 @@ var express = require('express');
 var router = express.Router();
 
 var crypto = require('crypto'),
-    User = require('../models/user.js');
+    User = require('../models/user'),
+    Post = require('../models/blog')
 
 router.get('/',function(req,res){
-    res.render('index', {
-        title: '主页',
-        user: req.session.user,
-        success: req.flash('success').toString(),
-        error: req.flash('error').toString()
+    Post.get(null, function (err, posts) {
+        if (err) {
+          posts = [];
+        } 
+        res.render('index', {
+          title: '主页',
+          user: req.session.user,
+          posts: posts,
+          success: req.flash('success').toString(),
+          error: req.flash('error').toString()
+        });
       });
 })
 
@@ -63,7 +70,12 @@ router.post('/reg',function(req,res){
 })
 
 router.get('/login',function(req,res){
-    res.render('login',{title:'login'});
+    res.render('login', {
+        title: '登录',
+        user: req.session.user,
+        success: req.flash('success').toString(),
+        error: req.flash('error').toString()
+    });
 })
 
 router.post('/login',function(req,res){
@@ -93,11 +105,22 @@ router.get('/post',function(req,res){
 })
 
 router.post('/post',function(req,res){
-
+    var currentUser = req.session.user,
+        post = new Post(currentUser.name, req.body.title, req.body.post);
+    post.save(function (err) {
+    if (err) {
+        req.flash('error', err); 
+        return res.redirect('/');
+    }
+    req.flash('success', '发布成功!');
+    res.redirect('/');//发表成功跳转到主页
+    });
 })
 
 router.get('/logout',function(req,res){
-    
+    req.session.user = null;
+    req.flash('success', '登出成功!');
+    res.redirect('/');//登出成功后跳转到主页
 })
 
 module.exports = router;
