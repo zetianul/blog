@@ -1,4 +1,4 @@
-var mongobd = require('./db')
+var mongodb = require('./db')
 
 function Post(name,title,post){
     this.name = name;
