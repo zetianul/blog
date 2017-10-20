@@ -4,6 +4,7 @@ var router = express.Router();
 var crypto = require('crypto'),
     User = require('../models/user'),
     Post = require('../models/blog')
+    upload = require('../models/upload')
 
 router.get('/',function(req,res){
     Post.get(null, function (err, posts) {
@@ -127,5 +128,20 @@ router.get('/logout',function(req,res){
     req.flash('success', '登出成功!');
     res.redirect('/');//登出成功后跳转到主页
 })
+
+router.get('/upload', function (req, res) {
+    res.render('upload', {
+      title: '文件上传',
+      user: req.session.user,
+      success: req.flash('success').toString(),
+      error: req.flash('error').toString()
+    });
+});
+router.post('/upload', upload.upload ,function (req, res, next) {
+    req.flash('success', '文件上传成功!');
+    res.redirect('/upload');
+});
+
+
 
 module.exports = router;
